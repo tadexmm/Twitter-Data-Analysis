@@ -37,6 +37,12 @@ class TweetDfExtractor:
     # an example function
     def find_statuses_count(self)->list:
         statuses_count = []
+        for x in self.tweets_list:
+            try:
+                statuses_count.append(x['user']['statuses_count'])
+            except KeyError:
+                statuses_count.append(None)
+            
         return statuses_count
         
     def find_full_text(self)->list:
@@ -51,12 +57,24 @@ class TweetDfExtractor:
        
     
     def find_sentiments(self, text)->list:
-        polarity = ...
-        self.subjectivity = ...
-        return polarity, self.subjectivity
-    
+        polarity = []
+        subjectivity = []
+        for x in text:
+            t = TextBlob(x)
+            polarity.append(t.polarity)
+            subjectivity.append(t.subjectivity)
+            
+        return polarity, subjectivity
+
     def find_lang(self)->list:
-        return []
+        lang = []
+        for x in self.tweets_list:
+            try:
+                lang.append(x['lang'])
+            except KeyError:
+                lang.append(None)
+            
+        return lang
         
     def find_created_time(self)->list:
         created_at = []
@@ -79,51 +97,95 @@ class TweetDfExtractor:
         return source
 
     def find_screen_name(self)->list:
-        screen_name = ...
-        pass
+        screen_name = []
+        for x in self.tweets_list:
+            try:
+                screen_name.append(x['user']['screen_name'])
+            except KeyError:
+                screen_name.append(None)
+            
+        return screen_name
 
     def find_followers_count(self)->list:
-        followers_count = ...
-        pass
+        followers_count = []
+        for x in self.tweets_list:
+            try:
+                followers_count.append(x['user']['followers_count'])
+            except KeyError:
+                followers_count.append(None)
+            
+        return followers_count
 
     def find_friends_count(self)->list:
-        friends_count = ...
-        pass
+        friends_count = []
+        for x in self.tweets_list:
+            try:
+                friends_count.append(x['user']['friends_count'])
+            except KeyError:
+                friends_count.append(None)
+            
+        return friends_count
 
     def is_sensitive(self)->list:
-        try:
-            is_sensitive = [x['possibly_sensitive'] for x in self.tweets_list]
-        except KeyError:
-            is_sensitive = [None]
-
+        is_sensitive = []
+        for x in self.tweets_list:
+            try:
+                is_sensitive.append(x['possibly_sensitive'])
+            except KeyError:
+                is_sensitive.append(None)
+            
         return is_sensitive
 
     def find_favourite_count(self)->list:
-        pass
+        favorite_count = []
+        for x in self.tweets_list:
+            try:
+                favorite_count.append(x['favorite_count'])
+            except KeyError:
+                favorite_count.append(None)
+            
+        return favorite_count
     
     def find_retweet_count(self)->list:
-        retweet_count = ...
-        pass
+        retweet_count = []
+        for x in self.tweets_list:
+            try:
+                retweet_count.append(x['retweet_count'])
+            except KeyError:
+                retweet_count.append(None)
+            
+        return retweet_count
 
     def find_hashtags(self)->list:
-        hashtags = ...
-        pass
+        hashtags = []
+        for x in self.tweets_list:
+            try:
+                hashtags.append([y["text"] for y in x['entities']['hashtags']])
+            except KeyError:
+                hashtags.append(None)
+            
+        return hashtags
 
     def find_mentions(self)->list:
-        mentions = ...
-        pass
+        user_mentions = []
+        for x in self.tweets_list:
+            try:
+                user_mentions.append(len(x['entities']['user_mentions']))
+            except KeyError:
+                user_mentions.append(None)
+            
+        return user_mentions
 
 
     def find_location(self)->list:
-        try:
-            location = self.tweets_list['user']['location']
-        except TypeError:
-            location = ''
-        
+        location = []
+        for x in self.tweets_list:
+            try:
+                location.append(x['user']['location'])
+            except TypeError:
+                location.append('')
+            
         return location
-
-    
-        
         
     def get_tweet_df(self, save=False)->pd.DataFrame:
         """required column to be generated you should be creative and add more features"""
@@ -145,6 +207,7 @@ class TweetDfExtractor:
         hashtags = self.find_hashtags()
         mentions = self.find_mentions()
         location = self.find_location()
+
         data = zip(created_at, source, text, polarity, subjectivity, lang, fav_count, retweet_count, screen_name, follower_count, friends_count, sensitivity, hashtags, mentions, location)
         df = pd.DataFrame(data=data, columns=columns)
 
