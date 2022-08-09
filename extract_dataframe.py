@@ -40,8 +40,14 @@ class TweetDfExtractor:
         return statuses_count
         
     def find_full_text(self)->list:
-        text = []
-        return text
+        full_text = []
+        for x in self.tweets_list:
+            try:
+                full_text.append(x['full_text'])
+            except KeyError:
+                full_text.append(None)
+            
+        return full_text
        
     
     def find_sentiments(self, text)->list:
@@ -63,11 +69,13 @@ class TweetDfExtractor:
         return created_at
 
     def find_source(self)->list:
-        try:
-            source = [x['source'] for x in self.tweets_list]
-        except KeyError:
-            source = [None]
-
+        source = []
+        for x in self.tweets_list:
+            try:
+                source.append(x['source'])
+            except KeyError:
+                source.append(None)
+            
         return source
 
     def find_screen_name(self)->list:
