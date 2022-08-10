@@ -90,7 +90,8 @@ class TweetDfExtractor:
         source = []
         for x in self.tweets_list:
             try:
-                source.append(x['source'])
+                s = x['source']
+                source.append(s[s.find(">")+1:s.rfind("<")])
             except KeyError:
                 source.append(None)
             
