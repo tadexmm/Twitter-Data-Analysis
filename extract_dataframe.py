@@ -54,8 +54,26 @@ class TweetDfExtractor:
                 full_text.append(None)
             
         return full_text
-       
+
+    def clean_original_text(self, original_text):
+        pass
+        return original_text
     
+    def find_screen_count(self):
+        pass
+        
+    def find_place(self):
+        pass
+
+    def find_place_coord_boundaries(self):
+        pass
+
+    def find_media_type(self):
+        pass
+
+    def self_find_place_country(self):
+        pass
+
     def find_sentiments(self, text)->list:
         polarity = []
         subjectivity = []
@@ -196,18 +214,24 @@ class TweetDfExtractor:
         
         created_at = self.find_created_time()
         source = self.find_source()
-        text = self.find_full_text()
-        polarity, subjectivity = self.find_sentiments(text)
+        original_text = self.find_full_text()
+        #clean_text = self.clean_original_text(original_text)
+        polarity, subjectivity = self.find_sentiments(clean_text)
         lang = self.find_lang()
-        fav_count = self.find_favourite_count()
+        favorite_count = self.find_favourite_count()
         retweet_count = self.find_retweet_count()
-        screen_name = self.find_screen_name()
-        follower_count = self.find_followers_count()
+        original_author = self.find_screen_name()
+        #screen_count = self.screen_count()
+        followers_count = self.find_followers_count()
         friends_count = self.find_friends_count()
-        sensitivity = self.is_sensitive()
+        possibly_sensitive = self.is_sensitive()
         hashtags = self.find_hashtags()
-        mentions = self.find_mentions()
+        user_mentions = self.find_mentions()
         location = self.find_location()
+        #place = self.find_place()
+        #place_coord_boundaries = self.find_place_coord_boundaries()
+        #media_type = self.find_media_type()
+        #place_country = self.find_place_country()
 
         data = zip(created_at, source, text, polarity, subjectivity, lang, fav_count, retweet_count, screen_name, follower_count, friends_count, sensitivity, hashtags, mentions, location)
         df = pd.DataFrame(data=data, columns=columns)
