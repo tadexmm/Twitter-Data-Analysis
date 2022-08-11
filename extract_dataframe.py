@@ -76,34 +76,34 @@ class TweetDfExtractor:
         return screen_count
         
     def find_place(self):
-        lang = []
+        place = []
         for x in self.tweets_list:
             try:
-                lang.append(x['lang'])
-            except KeyError:
-                lang.append(None)
+                place.append(x['place']["name"])
+            except TypeError:
+                place.append(None)
             
-        return lang
+        return place
 
     def find_place_coord_boundaries(self):
-        lang = []
+        place = []
         for x in self.tweets_list:
             try:
-                lang.append(x['lang'])
-            except KeyError:
-                lang.append(None)
+                place.append(x['place']["bounding_box"]["coordinates"])
+            except TypeError:
+                place.append(None)
             
-        return lang
+        return place
     
     def find_place_country(self):
-        lang = []
+        place = []
         for x in self.tweets_list:
             try:
-                lang.append(x['lang'])
-            except KeyError:
-                lang.append(None)
+                place.append(x['place']["country"])
+            except TypeError:
+                place.append(None)
 
-        return lang
+        return place
 
     def find_media_type(self):
         lang = []
