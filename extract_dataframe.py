@@ -69,7 +69,7 @@ class TweetDfExtractor:
         screen_count = []
         for x in self.tweets_list:
             try:
-                screen_count.append(x['user']['screen_count'])
+                screen_count.append(x['user']['listed_count'])
             except KeyError:
                 screen_count.append(None)
             
