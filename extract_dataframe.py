@@ -105,16 +105,6 @@ class TweetDfExtractor:
 
         return place
 
-    def find_media_type(self):
-        lang = []
-        for x in self.tweets_list:
-            try:
-                lang.append(x['lang'])
-            except KeyError:
-                lang.append(None)
-            
-        return lang
-
     def self_find_place_country(self):
         lang = []
         for x in self.tweets_list:
@@ -265,7 +255,7 @@ class TweetDfExtractor:
         columns = ['created_at', 'source', 'original_text','clean_text', 'sentiment','polarity','subjectivity',
                    'lang', 'favorite_count', 'retweet_count', 'original_author', 'screen_count',
                    'followers_count','friends_count','possibly_sensitive', 'hashtags', 'user_mentions',
-                   'place', 'place_coord_boundaries', 'media_type', 'place_country']
+                   'place', 'place_coord_boundaries', 'place_country']
         created_at = self.find_created_time()
         source = self.find_source()
         original_text = self.find_full_text()
@@ -285,13 +275,12 @@ class TweetDfExtractor:
         location = self.find_location()
         place = self.find_place()
         place_coord_boundaries = self.find_place_coord_boundaries()
-        media_type = self.find_media_type()
         place_country = self.find_place_country()
 
         data = zip(created_at, source, original_text, clean_text, sentiment, polarity, subjectivity, lang,
                    favorite_count, retweet_count, original_author, screen_count,
                    followers_count, friends_count, possibly_sensitive, hashtags, user_mentions, place
-                   , place_coord_boundaries, media_type, place_country)
+                   , place_coord_boundaries, place_country)
         df = pd.DataFrame(data=data, columns=columns)
 
         if save:
