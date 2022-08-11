@@ -243,13 +243,17 @@ class TweetDfExtractor:
         return user_mentions
 
 
-    def find_location(self)->list:
+    def find_user_location(self)->list:
         location = []
         for x in self.tweets_list:
             try:
-                location.append(x['user']['location'])
+                l = x['user']['location']
+                if l.strip() == "":
+                    location.append(None)
+                else:
+                    location.append(l)
             except TypeError:
-                location.append('')
+                location.append(None)
             
         return location
         
@@ -259,7 +263,7 @@ class TweetDfExtractor:
         # columns = ['created_at', 'source', 'original_text','polarity','subjectivity', 'lang', 'favorite_count', 'retweet_count',
         #           'original_author', 'followers_count','friends_count','possibly_sensitive', 'hashtags', 'user_mentions', 'place']
         columns = ['created_at', 'source', 'original_text','clean_text', 'sentiment','polarity','subjectivity',
-                   'lang', 'favorite_count', 'retweet_count', 'original_author', 'screen_count',
+                   'lang', 'favorite_count', 'retweet_count', 'original_author', 'user_location', 'screen_count',
                    'followers_count','friends_count','possibly_sensitive', 'hashtags', 'user_mentions',
                    'place', 'place_coord_boundaries', 'place_country']
         created_at = self.find_created_time()
@@ -272,19 +276,20 @@ class TweetDfExtractor:
         favorite_count = self.find_favourite_count()
         retweet_count = self.find_retweet_count()
         original_author = self.find_screen_name()
+        user_location = self.find_user_location()
         screen_count = self.find_screen_count()
         followers_count = self.find_followers_count()
         friends_count = self.find_friends_count()
         possibly_sensitive = self.is_sensitive()
         hashtags = self.find_hashtags()
         user_mentions = self.find_mentions()
-        location = self.find_location()
+        #location = self.find_location()
         place = self.find_place()
         place_coord_boundaries = self.find_place_coord_boundaries()
         place_country = self.find_place_country()
 
         data = zip(created_at, source, original_text, clean_text, sentiment, polarity, subjectivity, lang,
-                   favorite_count, retweet_count, original_author, screen_count,
+                   favorite_count, retweet_count, original_author, user_location, screen_count,
                    followers_count, friends_count, possibly_sensitive, hashtags, user_mentions, place
                    , place_coord_boundaries, place_country)
         df = pd.DataFrame(data=data, columns=columns)
