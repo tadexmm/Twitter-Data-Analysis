@@ -59,9 +59,15 @@ class TweetDfExtractor:
     def clean_original_text(self, original_text):
         # Make lower case
         clean_text = []
+        punctuation = string.punctuation.replace('@', "")
+        punctuation = punctuation.replace('_', "")
+        
         for x in original_text:
             c = x.lower()
-            c = c.translate(str.maketrans(" ", " ", string.punctuation))
+            c = c.replace('\n', '')
+            c = c.translate(str.maketrans(" ", " ", punctuation))
+            c = re.sub('@[\w]+', ' ', c)
+            c = c.translate(str.maketrans(" ", " ", punctuation))
             clean_text.append(c)
         return clean_text
     
