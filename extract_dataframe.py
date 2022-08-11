@@ -1,7 +1,8 @@
 import json
 import pandas as pd
 from textblob import TextBlob
-
+import string
+import re
 
 def read_json(json_file: str)->list:
     """
@@ -56,23 +57,69 @@ class TweetDfExtractor:
         return full_text
 
     def clean_original_text(self, original_text):
-        pass
-        return original_text
+        # Make lower case
+        clean_text = []
+        punctuation = string.punctuation.replace('@', "")
+        punctuation = punctuation.replace('_', "")
+        
+        for x in original_text:
+            c = x.lower()
+            c = c.replace('\n', '')
+            c = c.translate(str.maketrans(" ", " ", punctuation))
+            c = re.sub('@[\w]+', ' ', c)
+            c = c.translate(str.maketrans(" ", " ", punctuation))
+            clean_text.append(c)
+        return clean_text
     
     def find_screen_count(self):
-        pass
+        screen_count = []
+        for x in self.tweets_list:
+            try:
+                screen_count.append(x['user']['listed_count'])
+            except KeyError:
+                screen_count.append(None)
+            
+        return screen_count
         
     def find_place(self):
-        pass
+        place = []
+        for x in self.tweets_list:
+            try:
+                place.append(x['place']["name"])
+            except TypeError:
+                place.append(None)
+            
+        return place
 
     def find_place_coord_boundaries(self):
-        pass
+        place = []
+        for x in self.tweets_list:
+            try:
+                place.append(x['place']["bounding_box"]["coordinates"])
+            except TypeError:
+                place.append(None)
+            
+        return place
+    
+    def find_place_country(self):
+        place = []
+        for x in self.tweets_list:
+            try:
+                place.append(x['place']["country"])
+            except TypeError:
+                place.append(None)
 
-    def find_media_type(self):
-        pass
+        return place
 
     def self_find_place_country(self):
-        pass
+        lang = []
+        for x in self.tweets_list:
+            try:
+                lang.append(x['lang'])
+            except KeyError:
+                lang.append(None)
+            
+        return lang
 
     def find_sentiments(self, text)->list:
         polarity = []
@@ -209,31 +256,37 @@ class TweetDfExtractor:
     def get_tweet_df(self, save=False)->pd.DataFrame:
         """required column to be generated you should be creative and add more features"""
         
-        columns = ['created_at', 'source', 'original_text','polarity','subjectivity', 'lang', 'favorite_count', 'retweet_count', 
-            'original_author', 'followers_count','friends_count','possibly_sensitive', 'hashtags', 'user_mentions', 'place']
-        
+        # columns = ['created_at', 'source', 'original_text','polarity','subjectivity', 'lang', 'favorite_count', 'retweet_count',
+        #           'original_author', 'followers_count','friends_count','possibly_sensitive', 'hashtags', 'user_mentions', 'place']
+        columns = ['created_at', 'source', 'original_text','clean_text', 'sentiment','polarity','subjectivity',
+                   'lang', 'favorite_count', 'retweet_count', 'original_author', 'screen_count',
+                   'followers_count','friends_count','possibly_sensitive', 'hashtags', 'user_mentions',
+                   'place', 'place_coord_boundaries', 'place_country']
         created_at = self.find_created_time()
         source = self.find_source()
         original_text = self.find_full_text()
-        #clean_text = self.clean_original_text(original_text)
+        clean_text = self.clean_original_text(original_text)
         polarity, subjectivity = self.find_sentiments(clean_text)
+        sentiment = zip(polarity, subjectivity)
         lang = self.find_lang()
         favorite_count = self.find_favourite_count()
         retweet_count = self.find_retweet_count()
         original_author = self.find_screen_name()
-        #screen_count = self.screen_count()
+        screen_count = self.find_screen_count()
         followers_count = self.find_followers_count()
         friends_count = self.find_friends_count()
         possibly_sensitive = self.is_sensitive()
         hashtags = self.find_hashtags()
         user_mentions = self.find_mentions()
         location = self.find_location()
-        #place = self.find_place()
-        #place_coord_boundaries = self.find_place_coord_boundaries()
-        #media_type = self.find_media_type()
-        #place_country = self.find_place_country()
+        place = self.find_place()
+        place_coord_boundaries = self.find_place_coord_boundaries()
+        place_country = self.find_place_country()
 
-        data = zip(created_at, source, text, polarity, subjectivity, lang, fav_count, retweet_count, screen_name, follower_count, friends_count, sensitivity, hashtags, mentions, location)
+        data = zip(created_at, source, original_text, clean_text, sentiment, polarity, subjectivity, lang,
+                   favorite_count, retweet_count, original_author, screen_count,
+                   followers_count, friends_count, possibly_sensitive, hashtags, user_mentions, place
+                   , place_coord_boundaries, place_country)
         df = pd.DataFrame(data=data, columns=columns)
 
         if save:

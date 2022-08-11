@@ -56,3 +56,8 @@ class Clean_Tweets:
         df = df[mask]
         
         return df
+    
+    def remove_retweets(self, df:pd.DataFrame)->pd.DataFrame:
+        mask = df["original_text"].str.contains("^RT")
+        df = df[~mask]
+        return df
