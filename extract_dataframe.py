@@ -64,10 +64,23 @@ class TweetDfExtractor:
         
         for x in original_text:
             c = x.lower()
+            # Remove new lines
             c = c.replace('\n', '')
+            # Remove punctuation except @ & _
             c = c.translate(str.maketrans(" ", " ", punctuation))
+            # Remove user @handles
             c = re.sub('@[\w]+', ' ', c)
+            # Remove @ & _
             c = c.translate(str.maketrans(" ", " ", punctuation))
+            # Remove emojis
+            
+            emoji_pattern = re.compile("["
+                    u"\U0001F600-\U0001F64F"  # emoticons
+                    u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                    u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                    u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                                       "]+", flags=re.UNICODE)
+            c = emoji_pattern.sub(r'', c) # no emoji
             clean_text.append(c)
         return clean_text
     
