@@ -66,8 +66,8 @@ class Clean_Tweets:
         return df
     
     def remove_retweets(self, df:pd.DataFrame)->pd.DataFrame:
-        df["original_text"] = df["original_text"].str.replace("^RT", "")
-        df["clean_text"] = df["clean_text"].str.replace("^rt", "")
+        df["original_text"] = df["original_text"].str.replace("^RT", "", regex=True)
+        df["clean_text"] = df["clean_text"].str.replace("^rt", "", regex=True)
         return df
 
     @classmethod
