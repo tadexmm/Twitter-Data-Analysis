@@ -63,3 +63,15 @@ class Clean_Tweets:
         mask = df["original_text"].str.contains("^RT")
         df = df[~mask]
         return df
+
+    @classmethod
+    def clean_df(_, df:pd.DataFrame)->pd.DataFrame:
+        c = Clean_Tweets(df);
+        df = c.drop_unwanted_column(df)
+        df = c.drop_duplicate(df)
+        df = c.convert_to_datetime(df)
+        df = c.convert_to_numbers(df)
+        df = c.remove_non_english_tweets(df)
+        
+        return df
+
