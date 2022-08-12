@@ -95,7 +95,7 @@ class TweetDfExtractor:
         place = []
         for x in self.tweets_list:
             try:
-                place.append(x['place']["bounding_box"]["coordinates"])
+                place.append(json.dumps(x['place']["bounding_box"]["coordinates"]))
             except TypeError:
                 place.append(None)
             
