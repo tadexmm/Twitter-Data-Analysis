@@ -50,6 +50,12 @@ class Clean_Tweets:
         
         return df
     
+    def convert_to_string(self, df:pd.DataFrame)->pd.DataFrame:
+        string_columns = ["original_text", "clean_text"]
+        df[string_columns] = df[string_columns].astype(str)
+
+        return df
+
     def remove_non_english_tweets(self, df:pd.DataFrame)->pd.DataFrame:
         """
         remove non english tweets from lang
@@ -71,6 +77,7 @@ class Clean_Tweets:
         df = c.drop_duplicate(df)
         df = c.convert_to_datetime(df)
         df = c.convert_to_numbers(df)
+        df = c.convert_to_string(df)
         df = c.remove_non_english_tweets(df)
         
         return df
